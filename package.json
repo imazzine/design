@@ -1,0 +1,34 @@
+{
+    "name": "@imazzine/design",
+    "version": "0.0.0",
+    "description": "",
+    "license": "Apache-2.0",
+    "author": {
+      "name": "Artem Lytvynov",
+      "email": "imazzine.development.kit@gmail.com"
+    },
+    "keywords": [],
+    "repository": {
+      "type": "git",
+      "url": "git@github.com:imazzine/design.git"
+    },
+    "bugs": {
+      "url": "https://github.com/imazzine/design/issues"
+    },
+    "homepage": "https://github.com/imazzine/design#readme",
+    "engines": {
+      "node": ">=6.0.0"
+    },
+    "devDependencies": {
+      "coveralls": "3.0.3",
+      "eslint": "5.15.1",
+      "eslint-plugin-jest": "22.3.2",
+      "eslint-plugin-node": "8.0.1",
+      "jest": "24.5.0"
+    },
+    "scripts": {
+      "lint": "./node_modules/.bin/eslint -c ./.eslintrc ./src/*.js",
+      "test": "jest",
+      "coveralls": "jest --coverage && cat ./coverage/lcov.info | coveralls"
+    }
+  }
