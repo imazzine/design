@@ -1,7 +1,7 @@
 {
     "name": "@imazzine/design",
     "version": "0.0.0",
-    "description": "Imazzine Development Kit architecture/design repository...",
+    "description": "Imazzine Development Kit architecture/design repository.",
     "license": "Apache-2.0",
     "author": {
       "name": "Artem Lytvynov",

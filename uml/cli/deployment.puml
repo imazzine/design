@@ -1,0 +1,21 @@
+@startuml
+cloud "Internet/Intranet" {
+    node "GIT\nserver" {
+        file "source \n code" as sources
+    }
+    node "<b>CI/CD</b>\n<b>server</b>" as ci {
+    }
+    node "NPM\nserver" {
+        package client
+        package plugin
+    }
+    ci ..> sources: <<use>>
+    ci --> client: <<publish>>
+    ci --> plugin: <<publish>>
+}
+node "Users' PC" as pc {
+    file "package.json" as npm
+}
+client <.. npm
+plugin <.. npm
+@enduml
