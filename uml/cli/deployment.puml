@@ -1,21 +1,47 @@
 @startuml
 cloud "Internet/Intranet" {
-    node "GIT\nserver" {
-        file "source \n code" as sources
+    node "GIT\nserver" as gitServer {
+        file "source \n code \n (.travis.yml, \n .gitlab-ci.yml)" as SourceCode
     }
-    node "<b>CI/CD</b>\n<b>server</b>" as ci {
+    node "<b>CI/CD</b>\n<b>server</b>" as ciServer {
+        node "Build Container (Docker)" as ciBuildNode
     }
-    node "NPM\nserver" {
-        package client
-        package plugin
+    node "NPM\nserver" as npmServer  {
+        package cli {
+            file "server.js"
+        }
+        package plugins {
+            file "cmd.js"
+        }
     }
-    ci ..> sources: <<use>>
-    ci --> client: <<publish>>
-    ci --> plugin: <<publish>>
+    interface "Webhooks + Bash + ..." as BashInterface
+
+    SourceCode --( BashInterface
+    BashInterface -- ciBuildNode
 }
-node "Users' PC" as pc {
-    file "package.json" as npm
+interface "GIT" as gitInterface
+interface "NPM" as npmInterface
+
+gitServer -- gitInterface
+ciBuildNode --( gitInterface
+npmServer -- npmInterface
+ciBuildNode --( npmInterface
+
+node "Leaders' Environment" as devPC {
+    file "CLI Server \n sources"
+    file "Plugins \n sources"
 }
-client <.. npm
-plugin <.. npm
+node "Developers' Environment" as userPC {
+    component "NPM Client" as npmClient
+    component "Node.js" as nodejs
+    component "CLI Server" as CLIServer
+    component "Plugable Command" as Plugin
+    interface CLI
+    nodejs <.. CLIServer: based on
+    npmClient ..> CLIServer: use
+    CLIServer .> Plugin: use
+    npmClient - CLI
+}
+gitInterface )-- devPC
+npmInterface )-- npmClient
 @enduml

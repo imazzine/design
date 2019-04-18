@@ -1,0 +1,6 @@
+@startuml
+CLI -> "NPM Client"
+"NPM Client" -> "CLI Server"
+"CLI Server" -> "Plugable Command"
+"Plugable Command" -> Environment
+@enduml
