@@ -25,12 +25,12 @@
       "eslint-plugin-jest": "22.3.2",
       "eslint-plugin-node": "8.0.1",
       "jest": "24.5.0",
-      "puml": "^1.0.0"
+      "puml": "1.0.1"
     },
     "scripts": {
       "lint": "./node_modules/.bin/eslint -c ./.eslintrc ./src/*.js",
       "test": "jest",
       "coveralls": "jest --coverage && cat ./coverage/lcov.info | coveralls",
-      "puml": "./node_modules/.bin/puml"
+      "compile": "node ./puml.js"
     }
   }
