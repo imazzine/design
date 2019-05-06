@@ -1,0 +1,119 @@
+@startuml devices
+    node "github.com" as GITServer
+    node "npmjs.com" as NPMServer
+    node "travis-ci.com" as CICDServer
+    node "coveralls.io" as CoverageServer
+    node "CLI Developer PC" as DeveloperPC
+    node "CLI User PC" as UserPC
+
+    interface "Ethernet" as Ethernet
+
+    GITServer "1" -( Ethernet
+    CICDServer "1" --( Ethernet
+    CoverageServer "1" --( Ethernet
+    Ethernet )- "1" NPMServer
+    Ethernet )-- "0..*" DeveloperPC
+    Ethernet )-- "0..*" UserPC
+@enduml
+
+@startuml processes
+    
+    node "github.com" as GITServer {
+        database "GIT Repo" as GITRepo
+        node "GIT Service" as GITService
+        GITRepo <- GITService: use
+    }
+    interface "GIT Webhooks" as GITWebhooks
+    interface "GIT Interface" as GITInterface
+    GITService - GITWebhooks
+    GITService -- GITInterface
+    
+    node "npmjs.com" as NPMServer {
+        node "NPM Service" as NPMService
+        database "NPM Package" as NPMPackage
+        NPMService -> NPMPackage: use
+    }
+    interface "NPM Interface" as NPMInterface
+    NPMService -- NPMInterface
+
+    node "travis-ci.com" as CICDServer {
+        node "CI/CD Service" as CICDService
+    }
+    interface "Travis Interface" as CICDInterface
+    CICDService -- CICDInterface
+    GITWebhooks )-- CICDService
+    GITInterface )- CICDService
+    CICDService -( NPMInterface
+    
+    node "coveralls.io" as CoverageServer {
+        node "Coverage Service" as CoverageService
+    }
+    interface "Coveralls Interface" as CoverageInterface
+    CoverageInterface --CoverageService
+    CICDService --( CoverageInterface
+    
+    node "CLI Developer PC" as DeveloperPC {
+        node "GIT Client" as GITClient
+        file "Source files" as Sources
+        file ".travis.yml" as travis_yml
+        GITRepo "0..*" o-- Sources
+        Sources *-- travis_yml
+        GITInterface )-- GITClient
+        CICDInterface )-- travis_yml
+    }
+
+    node "CLI User PC" as UserPC {
+        node "NPM Client" as NPMClient
+        file "Binaries" as Binaries
+        NPMInterface )-- NPMClient
+        NPMPackage "0..*" o-- Binaries
+    }
+@enduml
+
+@startuml
+cloud "Internet/Intranet" {
+    node "GIT\nserver" as gitServer {
+        file "source \n code \n (.travis.yml, \n .gitlab-ci.yml)" as SourceCode
+    }
+    node "<b>CI/CD</b>\n<b>server</b>" as ciServer {
+        node "Build Container (Docker)" as ciBuildNode
+    }
+    node "NPM\nserver" as npmServer  {
+        package cli {
+            file "server.js"
+        }
+        package plugins {
+            file "cmd.js"
+        }
+    }
+    interface "Webhooks + Bash + ..." as BashInterface
+
+    SourceCode --( BashInterface
+    BashInterface -- ciBuildNode
+}
+interface "GIT" as gitInterface
+interface "NPM" as npmInterface
+
+gitServer -- gitInterface
+ciBuildNode --( gitInterface
+npmServer -- npmInterface
+ciBuildNode --( npmInterface
+
+node "Leaders' Environment" as devPC {
+    file "CLI Server \n sources"
+    file "Plugins \n sources"
+}
+node "Developers' Environment" as userPC {
+    component "NPM Client" as npmClient
+    component "Node.js" as nodejs
+    component "CLI Server" as CLIServer
+    component "Plugable Command" as Plugin
+    interface CLI
+    nodejs <.. CLIServer: based on
+    npmClient ..> CLIServer: use
+    CLIServer .> Plugin: use
+    npmClient - CLI
+}
+gitInterface )-- devPC
+npmInterface )-- npmClient
+@enduml
