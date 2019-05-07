@@ -1,10 +1,10 @@
 @startuml devices
-    node "github.com" as GITServer
-    node "npmjs.com" as NPMServer
-    node "travis-ci.com" as CICDServer
-    node "coveralls.io" as CoverageServer
-    node "CLI Developer PC" as DeveloperPC
-    node "CLI User PC" as UserPC
+    node "GIT Server" as GITServer
+    node "NPM Server" as NPMServer
+    node "CI/CD Server" as CICDServer
+    node "Coverage Server" as CoverageServer
+    node "Producers' PC" as DeveloperPC
+    node "Consumers' PC" as UserPC
 
     interface "Ethernet" as Ethernet
 
@@ -18,17 +18,17 @@
 
 @startuml processes
     
-    node "github.com" as GITServer {
+    node "GIT Server" as GITServer {
         database "GIT Repo" as GITRepo
         node "GIT Service" as GITService
         GITRepo <- GITService: use
     }
-    interface "GIT Webhooks" as GITWebhooks
+    interface "GIT Service API" as GITServiceAPI
     interface "GIT Interface" as GITInterface
-    GITService - GITWebhooks
+    GITService -- GITServiceAPI
     GITService -- GITInterface
     
-    node "npmjs.com" as NPMServer {
+    node "NPM Server" as NPMServer {
         node "NPM Service" as NPMService
         database "NPM Package" as NPMPackage
         NPMService -> NPMPackage: use
@@ -36,37 +36,62 @@
     interface "NPM Interface" as NPMInterface
     NPMService -- NPMInterface
 
-    node "travis-ci.com" as CICDServer {
+    node "CI/CD Server" as CICDServer {
         node "CI/CD Service" as CICDService
     }
-    interface "Travis Interface" as CICDInterface
+    interface "CI/CD Interface" as CICDInterface
     CICDService -- CICDInterface
-    GITWebhooks )-- CICDService
+    GITServiceAPI )-- CICDService
     GITInterface )- CICDService
-    CICDService -( NPMInterface
+    CICDService --( NPMInterface
+
+    node "Container Server" as ContainerServer {
+        node "Continer Service" as ContainerService
+    }
+    interface "Container Interface" as ContainerInterface
+    ContainerService -- ContainerInterface
+    ContainerInterface )-- CICDService
     
-    node "coveralls.io" as CoverageServer {
+    node "Coverage Server" as CoverageServer {
         node "Coverage Service" as CoverageService
     }
-    interface "Coveralls Interface" as CoverageInterface
-    CoverageInterface --CoverageService
-    CICDService --( CoverageInterface
+    interface "Coverage Interface" as CoverageInterface
+    CoverageService -- CoverageInterface
+    CoverageInterface )-- CICDService
     
-    node "CLI Developer PC" as DeveloperPC {
+    node "Producers' PC" as ProducerPC {
         node "GIT Client" as GITClient
+        interface "GIT CLI" as GIT_CLI
+        GITClient -- GIT_CLI
+
+        ' node "NPM Client" as NPMClientP
+        ' interface "NPM CLI" as NPM_CLI_P
+        ' NPMInterface -- NPMClientP 
+        ' NPMClientP -- NPM_CLI_P
+
         file "Source files" as Sources
-        file ".travis.yml" as travis_yml
+        file "CI/CD Config" as CICDConf
+        file "NPM Config" as NPMConfig
         GITRepo "0..*" o-- Sources
-        Sources *-- travis_yml
+        Sources *-- CICDConf
+        Sources *-- NPMConfig
         GITInterface )-- GITClient
-        CICDInterface )-- travis_yml
+        CICDInterface )-- CICDConf
+        NPMInterface )-- NPMConfig
     }
 
-    node "CLI User PC" as UserPC {
-        node "NPM Client" as NPMClient
+    node "Consumers' PC" as ConsumerPC {
+        node "NPM Client" as NPMClientC
+        interface "NPM CLI" as NPM_CLI_C
+        NPMInterface )-- NPMClientC
+        NPMClientC -- NPM_CLI_C
+
+        node "Node.js" as NodeJS
+        NPMClientC --* NodeJS
+
         file "Binaries" as Binaries
-        NPMInterface )-- NPMClient
         NPMPackage "0..*" o-- Binaries
+        Binaries <-- NodeJS: run
     }
 @enduml
 
