@@ -1,34 +1,92 @@
-@startuml devices
-    node "GIT Server" as GITServer
-    node "NPM Server" as NPMServer
+@startuml devices_circle
+    node "Version Control Server" as VCServer
+    node "Package Manager Server" as PackageServer
     node "CI/CD Server" as CICDServer
-    node "Coverage Server" as CoverageServer
-    node "Producers' PC" as DeveloperPC
-    node "Consumers' PC" as UserPC
+    node "Producer" as Developer
+    node "Consumer" as User
 
     interface "Ethernet" as Ethernet
 
-    GITServer "1" -( Ethernet
-    CICDServer "1" --( Ethernet
-    CoverageServer "1" --( Ethernet
-    Ethernet )- "1" NPMServer
-    Ethernet )-- "0..*" DeveloperPC
-    Ethernet )-- "0..*" UserPC
+    VCServer -( Ethernet
+    CICDServer --( Ethernet
+    Ethernet )- PackageServer
+    Ethernet )-- Developer
+    Ethernet )-- User
 @enduml
 
-@startuml processes
+@startuml anonymous_boxes
     
-    node "GIT Server" as GITServer {
-        database "GIT Repo" as GITRepo
+    node "Version Control Server" as VCServer {
+        database "VC Repository" as VCRepo
+        node "VC Service" as VCService
+        VCRepo <- VCService: use
+    }
+    interface "VC Service API" as VCServiceAPI
+    interface "VC Interface" as VCInterface
+    VCService -- VCServiceAPI
+    VCService -- VCInterface
+    
+    node "Package Manager Server" as PackageServer {
+        node "Package Manager Service" as PackageService
+        database "Package" as PackagePackage
+        PackageService -> PackagePackage: use
+    }
+    interface "Package Manager Interface" as PackageInterface
+    PackageService -- PackageInterface
+
+    node "CI/CD Server" as CICDServer {
+        node "CI/CD Service" as CICDService
+    }
+    interface "CI/CD Interface" as CICDInterface
+    CICDService -- CICDInterface
+    VCServiceAPI )-- CICDService
+    VCInterface )- CICDService
+    CICDService --( PackageInterface
+    
+    node "Producer" as Producer {
+        node "VC Client" as VCClient
+        interface "VC CLI" as VC_CLI
+        VCClient -- VC_CLI
+
+        file "Source files" as Sources
+        file "CI/CD Config" as CICDConf
+        file "Package Config" as PackageConfig
+        VCRepo "0..*" o-- Sources
+        Sources *-- CICDConf
+        Sources *-- PackageConfig
+        VCInterface )-- VCClient
+        CICDInterface )-- CICDConf
+        PackageInterface )-- PackageConfig
+    }
+
+    node "Consumer" as Consumer {
+        node "Package Manager Client" as PackageClientC
+        interface "Package Manager CLI" as Package_CLI_C
+        PackageInterface )-- PackageClientC
+        PackageClientC -- Package_CLI_C
+
+        node "Package Runner" as PackageRunner
+        PackageClientC --* PackageRunner
+
+        file "Binaries" as Binaries
+        PackagePackage "0..*" o-- Binaries
+        Binaries <-- PackageRunner: run
+    }
+@enduml
+
+@startuml named_boxes
+    
+    node "github.com" as GITServer {
+        database "GIT Repository" as GITRepo
         node "GIT Service" as GITService
         GITRepo <- GITService: use
     }
-    interface "GIT Service API" as GITServiceAPI
+    interface "Webhooks" as Webhooks
     interface "GIT Interface" as GITInterface
-    GITService -- GITServiceAPI
+    GITService -- Webhooks
     GITService -- GITInterface
     
-    node "NPM Server" as NPMServer {
+    node "npmjs.com" as NPMServer {
         node "NPM Service" as NPMService
         database "NPM Package" as NPMPackage
         NPMService -> NPMPackage: use
@@ -36,30 +94,30 @@
     interface "NPM Interface" as NPMInterface
     NPMService -- NPMInterface
 
-    node "CI/CD Server" as CICDServer {
+    node "travis-ci.com" as CICDServer {
         node "CI/CD Service" as CICDService
     }
-    interface "CI/CD Interface" as CICDInterface
+    interface "Travis API" as CICDInterface
     CICDService -- CICDInterface
-    GITServiceAPI )-- CICDService
+    Webhooks )-- CICDService
     GITInterface )- CICDService
     CICDService --( NPMInterface
 
-    node "Container Server" as ContainerServer {
+    node "hub.docker.com" as ContainerServer {
         node "Continer Service" as ContainerService
     }
-    interface "Container Interface" as ContainerInterface
+    interface "Docker CLI" as ContainerInterface
     ContainerService -- ContainerInterface
     ContainerInterface )-- CICDService
     
-    node "Coverage Server" as CoverageServer {
+    node "coveralls.io" as CoverageServer {
         node "Coverage Service" as CoverageService
     }
-    interface "Coverage Interface" as CoverageInterface
+    interface "node-coveralls" as CoverageInterface
     CoverageService -- CoverageInterface
     CoverageInterface )-- CICDService
     
-    node "Producers' PC" as ProducerPC {
+    node "Producer" as Producer {
         node "GIT Client" as GITClient
         interface "GIT CLI" as GIT_CLI
         GITClient -- GIT_CLI
@@ -70,8 +128,8 @@
         ' NPMClientP -- NPM_CLI_P
 
         file "Source files" as Sources
-        file "CI/CD Config" as CICDConf
-        file "NPM Config" as NPMConfig
+        file ".travis.yml" as CICDConf
+        file "package.json" as NPMConfig
         GITRepo "0..*" o-- Sources
         Sources *-- CICDConf
         Sources *-- NPMConfig
@@ -80,11 +138,11 @@
         NPMInterface )-- NPMConfig
     }
 
-    node "Consumers' PC" as ConsumerPC {
+    node "Consumer" as Consumer {
         node "NPM Client" as NPMClientC
-        interface "NPM CLI" as NPM_CLI_C
+        interface "NPM CLI" as BIN
         NPMInterface )-- NPMClientC
-        NPMClientC -- NPM_CLI_C
+        NPMClientC -- BIN
 
         node "Node.js" as NodeJS
         NPMClientC --* NodeJS
@@ -93,52 +151,4 @@
         NPMPackage "0..*" o-- Binaries
         Binaries <-- NodeJS: run
     }
-@enduml
-
-@startuml
-cloud "Internet/Intranet" {
-    node "GIT\nserver" as gitServer {
-        file "source \n code \n (.travis.yml, \n .gitlab-ci.yml)" as SourceCode
-    }
-    node "<b>CI/CD</b>\n<b>server</b>" as ciServer {
-        node "Build Container (Docker)" as ciBuildNode
-    }
-    node "NPM\nserver" as npmServer  {
-        package cli {
-            file "server.js"
-        }
-        package plugins {
-            file "cmd.js"
-        }
-    }
-    interface "Webhooks + Bash + ..." as BashInterface
-
-    SourceCode --( BashInterface
-    BashInterface -- ciBuildNode
-}
-interface "GIT" as gitInterface
-interface "NPM" as npmInterface
-
-gitServer -- gitInterface
-ciBuildNode --( gitInterface
-npmServer -- npmInterface
-ciBuildNode --( npmInterface
-
-node "Leaders' Environment" as devPC {
-    file "CLI Server \n sources"
-    file "Plugins \n sources"
-}
-node "Developers' Environment" as userPC {
-    component "NPM Client" as npmClient
-    component "Node.js" as nodejs
-    component "CLI Server" as CLIServer
-    component "Plugable Command" as Plugin
-    interface CLI
-    nodejs <.. CLIServer: based on
-    npmClient ..> CLIServer: use
-    CLIServer .> Plugin: use
-    npmClient - CLI
-}
-gitInterface )-- devPC
-npmInterface )-- npmClient
 @enduml
