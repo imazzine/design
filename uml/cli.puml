@@ -15,7 +15,8 @@
 @enduml
 
 @startuml anonymous_boxes
-    
+    title Anonymous Boxes
+
     node "Version Control Server" as VCServer {
         database "VC Repository" as VCRepo
         node "VC Service" as VCService
@@ -60,21 +61,57 @@
     }
 
     node "Consumer" as Consumer {
-        node "Package Manager Client" as PackageClientC
-        interface "Package Manager CLI" as Package_CLI_C
-        PackageInterface )-- PackageClientC
-        PackageClientC -- Package_CLI_C
-
-        node "Package Runner" as PackageRunner
-        PackageClientC --* PackageRunner
+        node "Package Manager Client" as PackageClient
+        interface "Package Manager CLI" as Package_CLI
+        PackageInterface )-- PackageClient
+        PackageClient -- Package_CLI
 
         file "Binaries" as Binaries
+        interface "API" as API
         PackagePackage "0..*" o-- Binaries
-        Binaries <-- PackageRunner: run
+        PackageClient -> Binaries: install
+        Binaries -- API
     }
 @enduml
 
+@startuml anonymous_build_flow
+    title Anonymous Build Flow
+    start
+        if (static analysis) then (passed)
+            -[#green]->
+            if (tests execution) then (passed)
+                -[#green]->
+                if (documentation export) then (passed)
+                    -[#green]->
+                    if (compiling) then (passed)
+                        -[#green]->
+                        if (publishing) then (passed)
+                            -[#green]->
+                            :info/
+                        else (failed)
+                            (A)
+                        endif
+                    else (failed)
+                        (A)
+                    endif
+                else (failed)
+                    (A)
+                endif
+            else (failed)
+                (A)
+            endif
+        else (failed)
+            (A)
+        endif
+    end
+
+    (A)
+    :error/
+    stop
+@enduml
+
 @startuml named_boxes
+    title Named Boxes
     
     node "github.com" as GITServer {
         database "GIT Repository" as GITRepo
@@ -106,7 +143,7 @@
     node "hub.docker.com" as ContainerServer {
         node "Continer Service" as ContainerService
     }
-    interface "Docker CLI" as ContainerInterface
+    interface "Docker Interface" as ContainerInterface
     ContainerService -- ContainerInterface
     ContainerInterface )-- CICDService
     
@@ -122,33 +159,79 @@
         interface "GIT CLI" as GIT_CLI
         GITClient -- GIT_CLI
 
-        ' node "NPM Client" as NPMClientP
-        ' interface "NPM CLI" as NPM_CLI_P
-        ' NPMInterface -- NPMClientP 
-        ' NPMClientP -- NPM_CLI_P
-
         file "Source files" as Sources
         file ".travis.yml" as CICDConf
         file "package.json" as NPMConfig
+        ' file "Dockerfile" as DockerCongig
         GITRepo "0..*" o-- Sources
         Sources *-- CICDConf
         Sources *-- NPMConfig
+        ' Sources *-- DockerCongig
         GITInterface )-- GITClient
         CICDInterface )-- CICDConf
         NPMInterface )-- NPMConfig
+        ' ContainerInterface )-- DockerCongig
     }
 
     node "Consumer" as Consumer {
-        node "NPM Client" as NPMClientC
+        node "NPM Client" as NPMClient
         interface "NPM CLI" as BIN
-        NPMInterface )-- NPMClientC
-        NPMClientC -- BIN
-
-        node "Node.js" as NodeJS
-        NPMClientC --* NodeJS
+        NPMInterface )-- NPMClient
+        NPMClient -- BIN
 
         file "Binaries" as Binaries
+        interface "JS API" as API
         NPMPackage "0..*" o-- Binaries
-        Binaries <-- NodeJS: run
+        NPMClient -> Binaries: install
+        Binaries -- API
     }
+@enduml
+
+@startuml named_build_flow
+    title Named Build Flow
+    start
+        :Supported Node.js versions: 6,7,8,9,10,11,12}
+        while (for each version)
+            if (npm i) then (passed)
+                -[#green]->
+                if (eslint) then (passed)
+                    -[#green]->
+                    if (jest) then (passed)
+                        -[#green]->
+                        if (coveralls) then (passed)
+                            -[#green]->
+                            if (jsdoc) then (passed)
+                                -[#green]->
+                                if (webpack) then (passed)
+                                    -[#green]->
+                                    if (npm publish) then (passed)
+                                        -[#green]->
+                                        :stdout/
+                                    else (failed)
+                                        (A)
+                                    endif
+                                else (failed)
+                                    (A)
+                                endif
+                            else (failed)
+                                (A)
+                            endif
+                        else (failed)
+                            (A)
+                        endif
+                    else (failed)
+                        (A)
+                    endif
+                else (failed)
+                    (A)
+                endif
+            else (failed)
+                (A)
+            endif
+        endwhile
+    end
+    detach
+    (A)
+    :stderr/
+    stop
 @enduml
