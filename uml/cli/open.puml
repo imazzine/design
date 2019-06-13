@@ -1,0 +1,99 @@
+@startuml devices_network
+    title Devices Network
+
+    cloud "Internet" as Internet {
+        database "npmjs.com" as PackageServer
+        node "Host node" as HostNode
+        interface "Ethernet" as Ethernet
+        PackageServer --( Ethernet
+        Ethernet )-- HostNode
+    }
+@enduml
+
+@startuml services_network
+    skinparam note {
+        FontName "Courier New"
+    }
+
+    title Services Network
+
+    node "npmjs.com" as NPMServer {
+        interface "NPM Interface" as NPMInterface #ffc7fd
+        node "NPM Service" as NPMService
+        database "NPM Register" as NPMRegister
+        NPMService -> NPMRegister: use
+        NPMService -- NPMInterface
+    }
+
+    node "Host node" as HostNode {
+
+        frame "NPM Global Scope" as NPMGlobalScope {
+            package "imazzine-development-kit" as IDKPackage {
+                artifact "package.json" as PACKAGE_JSON
+                artifact "idk.js" as IDK_JS
+                IDK_JS <-- PACKAGE_JSON: specify executable
+                note as BIN_LIST
+                    "bin": {
+                        "idk": "./idk.js"
+                    }
+                end note
+                PACKAGE_JSON .. BIN_LIST
+            }
+        }
+        NPMRegister "1..*" o-- IDKPackage
+
+        node "Node.js process" as NodeJS {
+            component "IDK Application" as IDKApplication [[./IDKApplication.svg]]
+            IDKApplication <- IDK_JS: instansiate
+        }
+        ' NodeJS -> IDK_JS: evaluate
+
+        node "NPM Client" as NPMClient
+        NPMInterface )- NPMClient
+        PACKAGE_JSON <- NPMClient: use
+        NodeJS <- NPMClient: run
+
+
+        interface "npm" as NPMCli [[https://docs.npmjs.com/cli/install]] #c9ffc7
+        NPMClient -- NPMCli
+
+        note as NPM_CLI_LIST
+            npm i -g imazzine-development-kit
+        end note
+        NPMCli .. NPM_CLI_LIST
+
+        interface "bin" as NPMBinAPI [[https://docs.npmjs.com/files/package.json#bin]] #ffc7fd
+        NPMBinAPI - NPMClient
+
+        interface "idk" as IDKInterface #c9ffc7
+        IDKInterface -( NPMBinAPI
+
+        note as IDK_CLI_LIST
+            idk
+            idk list
+            idk help
+            idk version
+            idk register
+            idk unregister
+        end note
+        IDKInterface .. IDK_CLI_LIST
+    }
+
+    
+@enduml
+
+@startuml IDKApplication
+    title IDK Application
+
+    package "commander@2.20.0" as CommanderPackage {
+        component "Commander" as CommanderComponent [[https://www.npmjs.com/package/commander]]
+        interface "API" as CommanderAPI [[https://www.npmjs.com/package/commander]]
+        CommanderComponent - CommanderAPI
+    }
+
+    package "inquirer@6.3.1" as InquirerPackage {
+        component "Inquirer" as InquirerComponent [[https://www.npmjs.com/package/inquirer]]
+        interface "API" as InquirerAPI [[https://www.npmjs.com/package/inquirer]]
+        InquirerComponent - InquirerAPI
+    }
+@enduml

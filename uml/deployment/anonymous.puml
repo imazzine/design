@@ -1,0 +1,146 @@
+@startuml devices_network
+    title Devices Network
+
+    cloud "Network" as Network {
+        database "Version Control Server" as VCServer
+        database "Package Manager Server" as PackageServer
+        node "CI/CD Server" as CICDServer
+        actor "Producer" as Producer
+        actor "Consumer" as Consumer
+        interface "Ethernet" as Ethernet
+        VCServer -( Ethernet
+        CICDServer --( Ethernet
+        Ethernet )- PackageServer
+        Ethernet )-- Producer
+        Ethernet )-- Consumer
+    }
+@enduml
+
+@startuml devices_deployment_cycle
+    title Devices Deployment Cycle
+    
+    actor "Producer" as Producer
+    database "Version Control" as VCServer
+    participant "CI/CD Server" as CICDServer
+    database "Package Manager" as PackageServer
+    actor "Consumer" as Consumer
+
+    loop
+        Producer -> VCServer: sources
+        VCServer -> CICDServer: build request
+        VCServer <- CICDServer: sources request
+        VCServer -> CICDServer: sources
+        CICDServer -> CICDServer: build
+        alt build success
+            CICDServer -> PackageServer: binaries
+            ...
+            PackageServer <- Consumer: binaries request
+            PackageServer -> Consumer: binaries
+        else build error
+            ...
+            PackageServer <- Consumer: binaries request
+            alt old binaries exist
+                PackageServer -> Consumer: old binaries
+            else no binaries
+                PackageServer -> Consumer: error
+            end
+        end
+        ...
+    end
+@enduml
+
+@startuml services_network
+    title Services Network
+
+    node "Version Control (VC) Server" as VCServer {
+        database "VC Repository" as VCRepo
+        node "VC Service" as VCService
+        VCRepo <- VCService: use
+    }
+    interface "VC Service API" as VCServiceAPI
+    interface "VC Interface" as VCInterface
+    VCService -- VCServiceAPI
+    VCService -- VCInterface
+    
+    node "Package Manager Server" as PackageServer {
+        node "Package Manager Service" as PackageService
+        database "Package" as PackagePackage
+        PackageService -> PackagePackage: use
+    }
+    interface "Package Manager Interface" as PackageInterface
+    PackageService -- PackageInterface
+
+    node "CI/CD Server" as CICDServer {
+        node "CI/CD Service" as CICDService
+    }
+    interface "CI/CD Interface" as CICDInterface
+    CICDService -- CICDInterface
+    VCServiceAPI )-- CICDService
+    VCInterface )- CICDService
+    CICDService --( PackageInterface
+    
+    node "Producer" as Producer {
+        node "VC Client" as VCClient
+        interface "VC CLI" as VC_CLI
+        VCClient -- VC_CLI
+
+        file "Source files" as Sources
+        file "CI/CD Config" as CICDConf
+        file "Package Config" as PackageConfig
+        VCRepo "0..*" o-- Sources
+        Sources *-- CICDConf
+        Sources *-- PackageConfig
+        VCInterface )-- VCClient
+        CICDInterface )-- CICDConf
+        PackageInterface )-- PackageConfig
+    }
+
+    node "Consumer" as Consumer {
+        node "Package Manager Client" as PackageClient
+        interface "Package Manager CLI" as Package_CLI
+        PackageInterface )-- PackageClient
+        PackageClient -- Package_CLI
+
+        file "Binaries" as Binaries
+        interface "API" as API
+        PackagePackage "0..*" o-- Binaries
+        PackageClient -> Binaries: install
+        Binaries -- API
+    }
+@enduml
+
+@startuml build_flow
+    title Build Flow
+    start
+        if (analysing) then (passed)
+            -[#green]->
+            if (testing) then (passed)
+                -[#green]->
+                if (documenting) then (passed)
+                    -[#green]->
+                    if (compiling) then (passed)
+                        -[#green]->
+                        if (publishing) then (passed)
+                            -[#green]->
+                            :info/
+                        else (failed)
+                            (A)
+                        endif
+                    else (failed)
+                        (A)
+                    endif
+                else (failed)
+                    (A)
+                endif
+            else (failed)
+                (A)
+            endif
+        else (failed)
+            (A)
+        endif
+    end
+
+    (A)
+    :error/
+    stop
+@enduml

@@ -1,0 +1,63 @@
+@startuml devices_network
+    cloud "AWS" as AWSNetwork {
+        node "ZooKeeper Cluster" as ZooKeeperCluster {
+            node "ZooKeeper Server #1" as ZooKeeperServer1 {
+                node "ZooKeeper Service #1" as ZooKeeperService1
+            }
+            node "ZooKeeper Server #2" as ZooKeeperServer2 {
+                node "ZooKeeper Service #2" as ZooKeeperService2
+            }
+            node "ZooKeeper Server #3" as ZooKeeperServer3 {
+                node "ZooKeeper Service #3" as ZooKeeperService3
+            }
+            ZooKeeperServer1 -[hidden]- ZooKeeperServer2
+            ZooKeeperServer2 -[hidden]- ZooKeeperServer3
+        }
+        node "KuduDB Cluster" as KuduDBCluster {
+            node "KuduDB Master Server" as KuduDBMasterServer {
+                database "KuduDB Master" as KuduDBMaster
+            }
+            node "KuduDB Node Server #1" as KuduDBNodeServer1 {
+                database "KuduDB Tablet #1" as KuduDBTablet1
+            }
+            node "KuduDB Node Server #2" as KuduDBNodeServer2 {
+                database "KuduDB Tablet #2" as KuduDBTablet2
+            }
+            KuduDBMasterServer -[hidden]- KuduDBNodeServer1
+            KuduDBNodeServer1 -[hidden]- KuduDBNodeServer2
+        }
+        node "Drill Cluster" as DrillCluster {
+            node "Drill Server #1" as DrillServer1 {
+                node "Drillbit Service #1" as DrillbitService1
+            }
+            node "Drill Server #2" as DrillServer2 {
+                node "Drillbit Service #2" as DrillbitService2
+            }
+            node "Drill Server #3" as DrillServer3 {
+                node "Drillbit Service #3" as DrillbitService3
+            }
+            DrillServer1 -[hidden]- DrillServer2
+            DrillServer2 -[hidden]- DrillServer3
+        }
+        node "RabbitMQ Cluster" as RabbitMQCluster {
+            node "RabbitMQ Server #1" as RabbitMQServer1 {
+                queue "RabbitMQ Service" as RabbitMQService
+            }
+        }
+        ' node "MongoDB Cluster" as MongoDBCluster {
+        '     node "MongoDB Master Server" as MongoDBMasterServer {
+        '         database "MongoDB Master" as MongoDBMaster
+        '     }
+        ' }
+        ' MongoDBCluster -[hidden]- RabbitMQCluster
+    }
+    ' cloud "Internet" as Internet {
+
+    ' }
+    ' cloud "Intranet" as Intranet {
+    '     node "Database Server" as DatabaseServer {
+    '         database "Original Data" as OrigonalDB
+    '     }
+    ' }
+    ' interface "Ethernet" as Ethernet
+@enduml

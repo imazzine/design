@@ -1,0 +1,26 @@
+@startuml devices_network
+    title Devices Network
+
+    cloud "Internet" as Internet {
+        database "github.com" as VCServer
+        database "npmjs.com" as PackageServer
+        node "travis-ci.com" as CICDServer
+        database "hub.docker.com" as ContainerServer
+        node "coveralls.io" as CoverageServer
+    }
+    cloud "Intranet" as Intranet {
+        actor "Producer" as Producer
+        database "mycompany.com/registry" as IntraPackageServer
+        actor "Consumer" as Consumer
+    }
+    interface "Ethernet" as Ethernet
+
+    VCServer -( Ethernet
+    CICDServer --( Ethernet
+    ContainerServer --( Ethernet
+    CoverageServer --( Ethernet
+    Ethernet )- PackageServer
+    Ethernet )-- IntraPackageServer
+    Ethernet )-- Producer
+    Ethernet )-- Consumer
+@enduml
