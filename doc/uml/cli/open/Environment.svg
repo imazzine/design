@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" contentScriptType="application/ecmascript" contentStyleType="text/css" height="222px" preserveAspectRatio="none" style="width:323px;height:222px;" version="1.1" viewBox="0 0 323 222" width="323px" zoomAndPan="magnify"><defs><filter height="300%" id="f1a2l2fugo8fce" width="300%" x="-1" y="-1"><feGaussianBlur result="blurOut" stdDeviation="2.0"/><feColorMatrix in="blurOut" result="blurOut2" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .4 0"/><feOffset dx="4.0" dy="4.0" in="blurOut2" result="blurOut3"/><feBlend in="SourceGraphic" in2="blurOut3" mode="normal"/></filter></defs><g><text fill="#000000" font-family="sans-serif" font-size="18" lengthAdjust="spacingAndGlyphs" textLength="309" x="2" y="16.708">Process IDK Environment Interface</text><rect fill="#FEFECE" filter="url(#f1a2l2fugo8fce)" height="72.5313" style="stroke: #A80036; stroke-width: 1.5;" width="197" x="51.5" y="28.9531"/><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="98" x="101" y="42.0918">process.env.idk</text><line style="stroke: #A80036; stroke-width: 1.5;" x1="52.5" x2="247.5" y1="46.9219" y2="46.9219"/><ellipse cx="62.5" cy="57.9219" fill="none" rx="3" ry="3" style="stroke: #038048; stroke-width: 1.0;"/><text fill="#000000" font-family="sans-serif" font-size="10" lengthAdjust="spacingAndGlyphs" textLength="84" x="71.5" y="60.2041">version: &lt;string&gt;</text><ellipse cx="62.5" cy="69.5625" fill="none" rx="3" ry="3" style="stroke: #038048; stroke-width: 1.0;"/><text fill="#000000" font-family="sans-serif" font-size="10" lengthAdjust="spacingAndGlyphs" textLength="171" x="71.5" y="71.8447">commands: &lt;Array&lt;Command&gt;&gt;</text><ellipse cx="62.5" cy="81.2031" fill="none" rx="3" ry="3" style="stroke: #038048; stroke-width: 1.0;"/><text fill="#000000" font-family="sans-serif" font-size="10" lengthAdjust="spacingAndGlyphs" textLength="137" x="71.5" y="83.4854">projects: &lt;Array&lt;Project&gt;&gt;</text><ellipse cx="62.5" cy="92.8438" fill="none" rx="3" ry="3" style="stroke: #038048; stroke-width: 1.0;"/><text fill="#000000" font-family="sans-serif" font-size="10" lengthAdjust="spacingAndGlyphs" textLength="132" x="71.5" y="95.126">current: &lt;Project|boolean&gt;</text><rect fill="#FEFECE" filter="url(#f1a2l2fugo8fce)" height="49.25" style="stroke: #A80036; stroke-width: 1.5;" width="108" x="25" y="161.9531"/><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="62" x="48" y="175.0918">Command</text><line style="stroke: #A80036; stroke-width: 1.5;" x1="26" x2="132" y1="179.9219" y2="179.9219"/><ellipse cx="36" cy="190.9219" fill="none" rx="3" ry="3" style="stroke: #038048; stroke-width: 1.0;"/><text fill="#000000" font-family="sans-serif" font-size="10" lengthAdjust="spacingAndGlyphs" textLength="71" x="45" y="193.2041">path: &lt;string&gt;</text><ellipse cx="36" cy="202.5625" fill="none" rx="3" ry="3" style="stroke: #038048; stroke-width: 1.0;"/><text fill="#000000" font-family="sans-serif" font-size="10" lengthAdjust="spacingAndGlyphs" textLength="82" x="45" y="204.8447">config: &lt;Object&gt;</text><rect fill="#FEFECE" filter="url(#f1a2l2fugo8fce)" height="49.25" style="stroke: #A80036; stroke-width: 1.5;" width="108" x="168" y="161.9531"/><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="44" x="200" y="175.0918">Project</text><line style="stroke: #A80036; stroke-width: 1.5;" x1="169" x2="275" y1="179.9219" y2="179.9219"/><ellipse cx="179" cy="190.9219" fill="none" rx="3" ry="3" style="stroke: #038048; stroke-width: 1.0;"/><text fill="#000000" font-family="sans-serif" font-size="10" lengthAdjust="spacingAndGlyphs" textLength="71" x="188" y="193.2041">path: &lt;string&gt;</text><ellipse cx="179" cy="202.5625" fill="none" rx="3" ry="3" style="stroke: #038048; stroke-width: 1.0;"/><text fill="#000000" font-family="sans-serif" font-size="10" lengthAdjust="spacingAndGlyphs" textLength="82" x="188" y="204.8447">config: &lt;Object&gt;</text><!--reverse link Idk to Command--><path d="M122.0069,113.3711 C112.0954,129.9834 101.3657,147.9669 93.1029,161.8158 " fill="none" id="Idk&lt;-Command" style="stroke: #A80036; stroke-width: 1.0;"/><polygon fill="#FFFFFF" points="128.698,102.1571,122.1887,105.2602,122.5494,112.4622,129.0588,109.3592,128.698,102.1571" style="stroke: #A80036; stroke-width: 1.0;"/><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacingAndGlyphs" textLength="8" x="116.507" y="121.5951">1</text><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacingAndGlyphs" textLength="23" x="70.7374" y="151.035">0..*</text><!--reverse link Idk to Project--><path d="M178.387,113.3711 C188.438,129.9834 199.319,147.9669 207.698,161.8158 " fill="none" id="Idk&lt;-Project" style="stroke: #A80036; stroke-width: 1.0;"/><polygon fill="#FFFFFF" points="171.602,102.1571,171.2857,109.3613,177.814,112.4241,178.1303,105.2199,171.602,102.1571" style="stroke: #A80036; stroke-width: 1.0;"/><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacingAndGlyphs" textLength="8" x="166.5173" y="121.5951">1</text><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacingAndGlyphs" textLength="23" x="178.4088" y="151.035">0..*</text><!--
+@startuml Environment
+    title Process IDK Environment Interface
+
+    object "process.env.idk" as Idk {
+        +version: <string>
+        +commands: <Array<Command>>
+        +projects: <Array<Project>>
+        +current: <Project|boolean>
+    }
+
+    object "Command" as Command {
+        +path: <string>
+        +config: <Object>
+    }
+    Idk "1" o- - "0..*" Command
+
+    object "Project" as Project {
+        +path: <string>
+        +config: <Object>
+    }
+    Idk "1" o- - "0..*" Project
+@enduml
+
+PlantUML version 1.2019.09(Mon Aug 26 19:19:51 EEST 2019)
+(GPL source distribution)
+Java Runtime: Java(TM) SE Runtime Environment
+JVM: Java HotSpot(TM) 64-Bit Server VM
+Java Version: 1.8.0_201-b09
+Operating System: Linux
+OS Version: 4.15.0-55-generic
+Default Encoding: UTF-8
+Language: en
+Country: US
+--></g></svg>

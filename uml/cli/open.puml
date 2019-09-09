@@ -27,20 +27,20 @@
 
     node "Host node" as HostNode {
 
-        frame "NPM Global Scope" as NPMGlobalScope {
-            package "@imazzine/idk" as IDKPackage {
-                artifact "package.json" as PACKAGE_JSON [[./ConfigurationAPI.svg]]
-                artifact "idk.js" as IDK_JS
-                IDK_JS <.. PACKAGE_JSON: specifying path
+        frame "Node.js Global Scope" as NodeJsGlobalScope {
+            package "imazzine@0.0.0" as rootPackage {
+                package "@imazzine/cli@0.0.0" as cliPackage {
+                    artifact "cli.js" as cliJs
+                }
             }
         }
-        NPMRegister "1..*" o-- IDKPackage
+        NPMRegister "1..*" o-- rootPackage
 
         node "Node.js process" as NodeJS {
             component "IDK Application" as IDKApplication [[./IDKApplication.svg]]
-            IDKApplication <-- IDK_JS: execute
+            IDKApplication <-- cliJs: execute
         }
-        NodeJS --> IDK_JS: evaluate
+        NodeJS --> cliJs: evaluate
 
         node "NPM Client" as NPMClient
         NPMInterface )- NPMClient
@@ -50,88 +50,78 @@
         NPMClient -- NPMBinAPI
 
         frame "Command Line" as CommandLine {
-            interface "idk" as IDKInterface #c9ffc7
+            interface "zz" as IDKInterface #c9ffc7
             NPMBinAPI )-- IDKInterface
 
             interface "npm" as NPMCli [[https://docs.npmjs.com/cli/install]] #c9ffc7
             NPMClient -- NPMCli
 
             note as NPM_CLI_LIST
-                npm i -g @imazzine/idk@0.0.0
+                npm i -g imazzine@0.0.0
             end note
             NPMCli .. NPM_CLI_LIST
         }
 
-        interface "Configuration API" as ConfigurationAPI [[./ConfigurationAPI.svg]] #ffc7fd
-        NPMClient --( ConfigurationAPI
-        PACKAGE_JSON - ConfigurationAPI
-
         note as IDK_CLI_LIST
-            idk help
-            idk version
-            idk commands <add|configure|remove> <package_path> [set|unset] [key] [value]
-            idk projects <add|configure|remove> <project_path> [set|unset] [key] [value]
-            idk list <commands|projects>
-            --
-            idk lint
-            idk test
-            idk document
-            idk compile [mode]
-            idk build
+            zz help
+            zz version
+            zz commands <add|configure|remove> <name> [set|unset] [key] [value]
+            zz projects <add|configure|remove> <name> [set|unset] [key] [value]
+            zz list <commands|projects>
         end note
         IDKInterface .. IDK_CLI_LIST
     }
 @enduml
 
-@startuml ConfigurationAPI
-    title Configuration API
+' @startuml ConfigurationAPI
+'     title Configuration API
 
-    object "package.json" as package.json {
-        +name: "@imazzine/idk"
-        +version: "0.0.0"
-        +bin: <Bin>
-        +idk: <Idk>
-        +dependencies: <Dependencies>
-    }
+'     object "package.json" as package.json {
+'         +name: "@imazzine/idk"
+'         +version: "0.0.0"
+'         +bin: <Bin>
+'         +idk: <Idk>
+'         +dependencies: <Dependencies>
+'     }
 
-    object "Dependencies" as Dependencies {
-        +commander: <string> <b>(2.20.0)</b>
-        +@imazzine/idk.help: <string> <b>(0.0.0)</b>
-        +@imazzine/idk.version: <string> <b>(0.0.0)</b>
-        +@imazzine/idk.commands: <string> <b>(0.0.0)</b>
-        +@imazzine/idk.projects: <string> <b>(0.0.0)</b>
-        +@imazzine/idk.list: <string> <b>(0.0.0)</b>
-        +@imazzine/idk.lint: <string> <b>(0.0.0)</b>
-        +@imazzine/idk.test: <string> <b>(0.0.0)</b>
-        +@imazzine/idk.document: <string> <b>(0.0.0)</b>
-        +@imazzine/idk.compile: <string> <b>(0.0.0)</b>
-        +@imazzine/idk.build: <string> <b>(0.0.0)</b>
-    }
-    package.json "1" *-- "1" Dependencies
+'     object "Dependencies" as Dependencies {
+'         +commander: <string> <b>(2.20.0)</b>
+'         +@imazzine/idk.help: <string> <b>(0.0.0)</b>
+'         +@imazzine/idk.version: <string> <b>(0.0.0)</b>
+'         +@imazzine/idk.commands: <string> <b>(0.0.0)</b>
+'         +@imazzine/idk.projects: <string> <b>(0.0.0)</b>
+'         +@imazzine/idk.list: <string> <b>(0.0.0)</b>
+'         +@imazzine/idk.lint: <string> <b>(0.0.0)</b>
+'         +@imazzine/idk.test: <string> <b>(0.0.0)</b>
+'         +@imazzine/idk.document: <string> <b>(0.0.0)</b>
+'         +@imazzine/idk.compile: <string> <b>(0.0.0)</b>
+'         +@imazzine/idk.build: <string> <b>(0.0.0)</b>
+'     }
+'     package.json "1" *-- "1" Dependencies
 
-    object "Bin" as Bin {
-        +idk: <string> <b>("./idk.js")</b>
-    }
-    package.json "1" *-- "1" Bin
+'     object "Bin" as Bin {
+'         +idk: <string> <b>("./idk.js")</b>
+'     }
+'     package.json "1" *-- "1" Bin
 
-    object "Idk" as Idk {
-        +commands: <Array<Command>>
-        +projects: <Array<Project>>
-    }
-    package.json "1" *-- "1" Idk
+'     object "Idk" as Idk {
+'         +commands: <Array<Command>>
+'         +projects: <Array<Project>>
+'     }
+'     package.json "1" *-- "1" Idk
 
-    object "Command" as Command {
-        +path: <string>
-        +config: <Object>
-    }
-    Idk "1" o-- "0..*" Command
+'     object "Command" as Command {
+'         +path: <string>
+'         +config: <Object>
+'     }
+'     Idk "1" o-- "0..*" Command
 
-    object "Project" as Project {
-        +path: <string>
-        +config: <Object>
-    }
-    Idk "1" o-- "0..*" Project
-@enduml
+'     object "Project" as Project {
+'         +path: <string>
+'         +config: <Object>
+'     }
+'     Idk "1" o-- "0..*" Project
+' @enduml
 
 @startuml IDKApplication
     title IDK Application

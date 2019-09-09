@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" contentScriptType="application/ecmascript" contentStyleType="text/css" height="89px" preserveAspectRatio="none" style="width:246px;height:89px;" version="1.1" viewBox="0 0 246 89" width="246px" zoomAndPan="magnify"><defs><filter height="300%" id="finar0ohr1fz9" width="300%" x="-1" y="-1"><feGaussianBlur result="blurOut" stdDeviation="2.0"/><feColorMatrix in="blurOut" result="blurOut2" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .4 0"/><feOffset dx="4.0" dy="4.0" in="blurOut2" result="blurOut3"/><feBlend in="SourceGraphic" in2="blurOut3" mode="normal"/></filter></defs><g><text fill="#000000" font-family="sans-serif" font-size="18" lengthAdjust="spacingAndGlyphs" textLength="213" x="20" y="16.708">IDK Command Interface</text><rect fill="#FEFECE" filter="url(#finar0ohr1fz9)" height="49.25" style="stroke: #A80036; stroke-width: 1.5;" width="229" x="6" y="28.9531"/><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacingAndGlyphs" textLength="40" x="100.5" y="42.0918">export</text><line style="stroke: #A80036; stroke-width: 1.5;" x1="7" x2="234" y1="46.9219" y2="46.9219"/><ellipse cx="17" cy="57.9219" fill="none" rx="3" ry="3" style="stroke: #038048; stroke-width: 1.0;"/><text fill="#000000" font-family="sans-serif" font-size="10" lengthAdjust="spacingAndGlyphs" textLength="70" x="26" y="60.2041">help(): &lt;void&gt;</text><ellipse cx="17" cy="69.5625" fill="none" rx="3" ry="3" style="stroke: #038048; stroke-width: 1.0;"/><text fill="#000000" font-family="sans-serif" font-size="10" lengthAdjust="spacingAndGlyphs" textLength="203" x="26" y="71.8447">execute(argv: &lt;Array&lt;string&gt;&gt;): &lt;void&gt;</text><!--
+@startuml IDKCommandInterface
+    title IDK Command Interface
+
+    object export {
+        +help(): <void>
+        +execute(argv: <Array<string>>): <void>
+    }
+@enduml
+
+PlantUML version 1.2019.09(Mon Aug 26 19:19:51 EEST 2019)
+(GPL source distribution)
+Java Runtime: Java(TM) SE Runtime Environment
+JVM: Java HotSpot(TM) 64-Bit Server VM
+Java Version: 1.8.0_201-b09
+Operating System: Linux
+OS Version: 4.15.0-55-generic
+Default Encoding: UTF-8
+Language: en
+Country: US
+--></g></svg>
